@@ -10,7 +10,7 @@ const User = mongoose.model('users');//pulling users model
 passport.serializeUser((user, done) => {
     //we are serializing the id of the user in the database - assigned by mongo (user model instance id), 
     //not the google auth id(profile.id)
-    done(null, user.id);
+    done(null, user.id); 
 })
 //we are taking the serialized user and turn it back into a model
 //we get first whatever it's in the cookie, which is the id. 
@@ -35,12 +35,14 @@ passport.use(new GoogleStrategy({
             console.log(existingUser)
             if(existingUser) {
                 //we have already an existing user with given profile id
-                done(null, existingUser)
+                //we call done if we found the user.null - we are finished here, existingUser - here is the user.
+                done(null, existingUser) 
+                
             } else {
                 //we don't have a user with this profile id 
                 //creating a new instance of user that has google Id and on the profile we extract the id
                 new User({ googleId: profile.id })
-                .save()
+                .save() //saving the instance from mongoose into mongoDB
                 //getting back the final user from database
                 .then(user => done(null, user));
             }

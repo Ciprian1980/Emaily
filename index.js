@@ -8,15 +8,17 @@ require('./services/passport.js');
 
 mongoose.connect(keys.mongoURI, {
         useNewUrlParser: true,
+        useCreateIndex: true,
         useUnifiedTopology: true,
         });
       
 const app = express();
 
+//set up the cookie session. it should last 30 days before it auto expire.
 app.use(
     cookieSession({
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        keys: [keys.cookieKey]
+        keys: [keys.cookieKey] //we are taking the key from keys file / cookieKey property.
     })
 )
 app.use(passport.initialize());
