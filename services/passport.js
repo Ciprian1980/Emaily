@@ -25,14 +25,13 @@ passport.deserializeUser((id, done) => {
 passport.use(new GoogleStrategy({
     clientID: keys.googleClientID,
     clientSecret: keys.googleClientSecret,
-    callbackURL: '/auth/google/callback',
-    proxy: true
+    callbackURL: 'https://shrouded-coast-67652.herokuapp.com/auth/google/callback'
+    //proxy: true
 }, 
     (accessToken, refreshToken, profile, done) => {
         //we search for profile id 
         User.findOne({ googleId: profile.id })
         .then((existingUser) => {
-            console.log(existingUser)
             if(existingUser) {
                 //we have already an existing user with given profile id
                 //we call done if we found the user.null - we are finished here, existingUser - here is the user.
