@@ -25,26 +25,22 @@ passport.deserializeUser((id, done) => {
 passport.use(new GoogleStrategy({
     clientID: keys.googleClientID,
     clientSecret: keys.googleClientSecret,
-    callbackURL: 'https://shrouded-coast-67652.herokuapp.com/auth/google/callback'
-    //proxy: true
+    callbackURL: '/auth/google/callback',
+    proxy: true
 }, 
-    (accessToken, refreshToken, profile, done) => {
+   async (accessToken, refreshToken, profile, done) => {
         //we search for profile id 
-        User.findOne({ googleId: profile.id })
-        .then((existingUser) => {
-            if(existingUser) {
+        const existingUser = await User.findOne({ googleId: profile.id })
+           if(existingUser) {
                 //we have already an existing user with given profile id
                 //we call done if we found the user.null - we are finished here, existingUser - here is the user.
-                done(null, existingUser) 
-                
-            } else {
+                return done(null, existingUser) 
+            } 
                 //we don't have a user with this profile id 
                 //creating a new instance of user that has google Id and on the profile we extract the id
-                new User({ googleId: profile.id })
-                .save() //saving the instance from mongoose into mongoDB
-                //getting back the final user from database
-                .then(user => done(null, user));
-            }
-        })
+                const user = await new User({ googleId: profile.id })
+                    .save() //saving the instance from mongoose into mongoDB
+                    //getting back the final user from database
+                    done(null, user);
     }
 ));
