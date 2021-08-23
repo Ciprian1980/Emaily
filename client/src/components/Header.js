@@ -12,10 +12,15 @@ class Header extends Component {
             case false:
                 return <li><a href="/auth/google">Login with Google</a></li>
             //default is the case that controls when user is logged in into our application
+            //user model is available as this.props.auth from our authReducer file,
+            //handleToken action through res variable, which is the updated user model.
             default: 
                 return [
-                    <li><Payments /></li>,
-                    <li><a href="/api/logout">Logout</a></li>
+                    <li key="1"><Payments /></li>,
+                    <li key="3" style={{ margin: '0 10px' }}>
+                        Credits: {this.props.auth.credits}
+                    </li>,
+                    <li key="2"><a href="/api/logout">Logout</a></li>
                 ];
         }
     }
