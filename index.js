@@ -2,10 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
-const keys = require('./config/keys.js');
+const keys = require('./config/keys');
 const bodyParser = require('body-parser');
-require('./models/User.js');
-require('./services/passport.js');
+//hook up models into project structure
+require('./models/Survey');
+require('./models/User');
+require('./services/passport');
 
 mongoose.connect(keys.mongoURI, {
         useNewUrlParser: true,
@@ -29,6 +31,7 @@ app.use(passport.session());
 
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
+require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
     //Express will serve up production assets
@@ -43,7 +46,7 @@ if (process.env.NODE_ENV === 'production') {
             path.resolve(
             __dirname, 
             'client', 
-            build, 
+            'build', 
             'index.html'
             ));
     })

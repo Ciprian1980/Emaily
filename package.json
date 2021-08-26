@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node": "16.7.0",
-    "npm": "7.20.3"
+    "node": "16.8.0",
+    "npm": "7.21.0"
   },
   "scripts": {
     "start": "node index.js",
@@ -27,6 +27,7 @@
     "nodemon": "^2.0.7",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
+    "sendgrid": "^5.2.3",
     "session": "^0.1.0",
     "stripe": "^8.170.0"
   }
