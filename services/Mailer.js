@@ -10,7 +10,7 @@ class Mailer extends helper.Mail {
         super();//helper.Mail gets executed when we call super()
 
         this.sgApi = sendgrid(keys.sendGridKey);
-        this.from_email = new helper.Email('no-reply@emaily.com');//whos is sending email
+        this.from_email = new helper.Email('cippopa@gmail.com');//whos is sending email
         this.subject = subject; //subject of email
         this.body = new helper.Content('text/html', content); //helper func from sendGrid library to help work properly the email and body in an email.
         //this.recipients is the array of recipients from formatAddresses(recipients)
@@ -54,7 +54,7 @@ class Mailer extends helper.Mail {
             path: '/v3/mail/send',
             body: this.toJSON()
         });
-        const response = this.sgApi.API(request);
+        const response = await this.sgApi.API(request);
         return response;
     }
 }
