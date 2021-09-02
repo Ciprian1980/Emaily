@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const recipientSchema = new Schema({
     email: String,
+    //if the user clicked on the button
     responded: { type: Boolean, default: false }
 });
 
