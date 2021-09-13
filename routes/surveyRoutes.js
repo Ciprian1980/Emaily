@@ -10,37 +10,65 @@ const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 const Survey = mongoose.model('surveys');
  
 module.exports = app => {
- //return a list of surveys created by the current user
-  app.get('/api/surveys/thanks', (req, res) => {
-    res.send('Thanks for voting!');
+  //user has to be logged in, we reach in database and find all queries
+  //made by the _user and specify that we do not want to include the recipient field.
+  app.get('/api/surveys', requireLogin, async (req, res) => {
+    const surveys = await Survey.find({ _user: req.user.id }).select({
+      recipients: false,
+    });
+
+    res.send(surveys);
   });
 
-  //extracting just the url and surveyId and choice
+ app.get('/api/surveys/:surveyId/:choice', (req, res) => {
+    res.send('Thanks for voting!');
+  });
+  //return a list of surveys created by the current user.
+ //extracting just the url and surveyId and choice
+ //iterate over req.body, we map over it, we compact it, 
+ //run uniqueBy to take out duplicates and return the value();
+ //we iterate over the events with lodash function - compact,
+ //which iterates over the array and removes all elements that are undefined.
+ //_.uniqBy is another lodash function that iterates over the array.
   app.post('/api/surveys/webhooks', (req, res) => {
-    console.log(req.body)
-    const events = _.map(req.body, (event) => {
-      //out of entire url, we take only '/api/surveys/5971/yes'.
-      const pathname = new URL(event.url).pathname; 
-      //extracting the surveyId and choice out of the path.
-      const p = new Path('/api/surveys/:surveyId/:choice');
-      const match = p.test(pathname);
-      console.log(match)
-      //if there is a match, return just the email, surveyId and the choice.
-      if (match) {
-        return { email, surveyId: match.surveyId, choice: match.choice };
-      }
-    })
-    //we iterate over the events with lodash function - compact,
-    //which iterates over the array and removes all elements that are undefined.
-    const compactEvents = _.compact(events);
+    const p = new Path('/api/surveys/:surveyId/:choice');
     
-    //_.uniqBy is another lodash function that iterates over the array 
-    //compactEvents and if they find email and surveyId duplicates, it removes them.
-    //the user can't vote twice - with same email on the same survey.
-    const uniqueEvents = _.uniqBy(compactEvents, 'email', 'surveyId');
-    //console.log(uniqueEvents);
+    _.chain(req.body)
+      .map(({ email, url }) => {
+        const match = p.test(new URL(url).pathname);
+        if (match) {
+          return { email, surveyId: match.surveyId, choice: match.choice };
+        }
+    })
+    .compact()
+    .uniqBy('email', 'surveyId')
+    //Look on the Survey collection, find and update exactly one record in that collection.
+    //we want to find the survey with that given id. We want to find and recipient
+    //with that given email, that has not responded yet to the survey.
+    //After this survey has been found, do the following to it:
+    //increment the choice by 1 and update the recipient we have found and update the responded prop to true.
+    //Recipients was found in SurveyId. We access with $ the responded property on the recipients that was found in $elemMatch.
+    //We need to write _id for Mongo, not just id.
+    .each(({ surveyId, email, choice }) => {
+      Survey.updateOne(
+        {
+        //finding the survey. $ is a mongo operator
+        _id: surveyId,
+        recipients: {
+          $elemMatch: { email: email, responded: false },
+        },
+      }, 
+      {
+        //We update the survey. [choice] - [] key interpolation.
+        $inc: { [choice]: 1 },
+        $set: { 'recipients.$.responded': true },
+        lastResponded: new Date(),
+      }
+      ).exec();
+    })
+    .value();
     res.send({});
-  })
+  });
 
  //create a new survey. Make sure the user is logged in and has enough credits.
   //req, res representing the incoming request to our application
@@ -55,7 +83,7 @@ module.exports = app => {
       //trim() would cut out extra white spaces
       recipients: recipients
         .split(',')
-        .map(email => ({ email })),
+        .map(email => ({ email: email.trim() })),
       _user: req.user.id,
       dateSent: Date.now(),
     });
