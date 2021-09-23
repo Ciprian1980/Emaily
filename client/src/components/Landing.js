@@ -6,6 +6,10 @@ const Landing = () => {
             <h1>
                 Emaily
             </h1>
+            <h5>
+                Survey generator
+            </h5>
+
         </div>
     )
 }

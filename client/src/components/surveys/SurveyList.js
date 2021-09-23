@@ -1,13 +1,15 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import { fetchSurveys} from '../../actions';
+import { fetchSurveys } from '../../actions';
 
 class SurveyList extends Component {
+   
     componentDidMount() {
         this.props.fetchSurveys();
     }
+ 
 
-    renderSurveys(){
+    renderSurveys() {
         return this.props.surveys.reverse().map(survey => {
             return (
                 <div className="card grey dark-1" key={survey._id}>
@@ -25,14 +27,14 @@ class SurveyList extends Component {
                         <a>No: {survey.no}</a>
                     </div>
                 </div>
-            )
-        })
+            );
+        });
     }
 
     render() {
         return (
             <div>{this.renderSurveys()}</div>
-        )
+        );
     }
 }
 

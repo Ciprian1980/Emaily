@@ -10,6 +10,12 @@ const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 const Survey = mongoose.model('surveys');
  
 module.exports = app => {
+  app.delete('/api/surveys/delete', requireLogin, async (req, res) => {
+    const deleteSurvey = await Survey.find({ _user: req.user.id });
+    res.send(deleteSurvey);
+  })
+
+
   //user has to be logged in, we reach in database and find all queries
   //made by the _user and specify that we do not want to include the recipient field.
   app.get('/api/surveys', requireLogin, async (req, res) => {
