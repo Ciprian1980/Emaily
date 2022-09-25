@@ -6,7 +6,7 @@ import React from 'react';
 //Some Event listeners live on props.input that we can work with
 //meta, error, touched are validation props that come with redux forms
 //touched is returning the error when the user touches the input field.
-export default ({ input, label,  meta: { error, touched } }) => {
+function SurveyField ({ input, label,  meta: { error, touched } })  {
     
     return (
         <div>
@@ -18,3 +18,4 @@ export default ({ input, label,  meta: { error, touched } }) => {
         </div>
     );
 };
+export default SurveyField;
