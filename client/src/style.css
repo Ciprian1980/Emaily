@@ -1,0 +1,35 @@
+h1, h5, h6 {
+  font-family: georgia;
+}
+
+.cards {
+  display: flex;
+  justify-content: space-between;
+  margin: 100px;
+}
+.card-one {
+  width: 200px;
+  height: 280px;
+  display: flex;
+  border-radius: 3px;
+  background-color: darkgray;
+  padding: 25px;
+  flex-direction: column;
+}
+
+.card-two {
+  width: 200px;
+  height: 280px;
+  display: flex;
+  border-radius: 3px;
+  background-color: darkgray;
+  padding: 25px;
+  flex-direction: column;
+}
+
+img {
+  border-radius: 3px;
+  height: 150px;
+}
+
+
