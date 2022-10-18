@@ -36,6 +36,7 @@ module.exports = app => {
  //we iterate over the events with lodash function - compact,
  //which iterates over the array and removes all elements that are undefined.
  //_.uniqBy is another lodash function that iterates over the array.
+
   app.post('/api/surveys/webhooks', (req, res) => {
     const p = new Path('/api/surveys/:surveyId/:choice');
     
@@ -73,6 +74,7 @@ module.exports = app => {
       ).exec();
     })
     .value();
+    console.log(req.body)
     res.send({});
   });
 
